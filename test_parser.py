@@ -8,3 +8,7 @@ print(f"\nColumns: {df.columns.tolist()}")
 print(f"\nFirst 5 rows:")
 print(df.head())
 print(f"\nTopics found: {df['topic'].value_counts()}")
+general = df[df['topic'] == 'General']
+print(general['text'].head(20).to_string())
+print(f"\nRows with no marks detected: {df['marks'].isna().sum()}")
+print(f"Rows with marks: {df['marks'].notna().sum()}")

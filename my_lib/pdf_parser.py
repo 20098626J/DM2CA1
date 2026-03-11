@@ -4,12 +4,25 @@ import os
 
 # Topic keyword mapping
 TOPIC_KEYWORDS = {
-    "Sets & Relations": ["set", "venn", "union", "intersection", "relation", "equivalence", "ordered pair", "digraph", "universal set"],
-    "Functions": ["function", "inverse", "domain", "range", "bijection", "injection", "surjection", "f(x)", "g(x)"],
-    "Logic & Boolean Algebra": ["truth table", "tautology", "logical", "boolean", "proposition", "implication", "induction", "predicate", "quantifier"],
-    "Combinatorics": ["permutation", "combination", "binomial", "generating function", "arrangement", "committee", "coefficient"],
-    "Graph Theory": ["graph", "vertex", "vertices", "edge", "eulerian", "hamiltonian", "bipartite", "adjacency", "circuit", "degree"],
-    "Sequences & Series": ["sequence", "series", "recursive", "partial fraction", "induction", "recurrence"],
+    "Sets & Relations": ["set", "venn", "union", "intersection", "relation", 
+                         "equivalence", "ordered pair", "digraph", "universal set",
+                         "subset", "complement", "cartesian", "partition"],
+    "Functions": ["function", "inverse", "domain", "range", "bijection", 
+                  "injection", "surjection", "f(x)", "g(x)", "onto", "one-to-one",
+                  "composition", "codomain"],
+    "Logic & Boolean Algebra": ["truth table", "tautology", "logical", "boolean", 
+                                 "proposition", "implication", "induction", "predicate",
+                                 "quantifier", "contrapositive", "converse", "negation",
+                                 "conjunction", "disjunction", "equivalence"],
+    "Combinatorics": ["permutation", "combination", "binomial", "generating function",
+                      "arrangement", "committee", "coefficient", "factorial", "choose",
+                      "ways", "selections", "expand", "theorem", "probability"],
+    "Graph Theory": ["graph", "vertex", "vertices", "edge", "eulerian", "hamiltonian",
+                     "bipartite", "adjacency", "circuit", "degree", "path", "cycle",
+                     "connected", "planar", "tree", "node"],
+    "Sequences & Series": ["sequence", "series", "recursive", "partial fraction", 
+                            "induction", "recurrence", "summation", "term", "formula",
+                            "arithmetic", "geometric"],
 }
 
 def detect_topic(text):
@@ -167,6 +180,10 @@ def parse_pdf(filepath):
                 "topic": topic,
             })
 
+    #only keep rows that have a marks value
+    rows = [r for r in rows if r["marks"] is not None]
+
+
     doc.close()
     return rows
 
@@ -192,3 +209,4 @@ def parse_all_pdfs(exam_folder):
                     print(f"Error parsing {fname}: {e}")
 
     return all_rows
+
