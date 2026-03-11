@@ -8,7 +8,10 @@ import os
 TOPIC_KEYWORDS = {
     "Sets & Relations": ["set", "venn", "union", "intersection", "relation",
                          "equivalence", "ordered pair", "digraph", "universal set",
-                         "subset", "complement", "cartesian", "partition",
+                         "subset", "complement", "cartesian", "partition","elements of the following sets",
+                         "list the elements","universal set","let p", "let q", "let r",
+                         "equivalence relation","ordered pairs","draw a digraph",
+                         "reflexive", "symmetric", "transitive",
                          "∧", "∨", "∩", "∪", "∈", "⊆", "⊂", r"\A", r"\B", r"\C"],
     "Functions": ["function", "inverse", "domain", "range", "bijection",
                   "injection", "surjection", "onto", "one-to-one", "composition",
