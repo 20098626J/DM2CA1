@@ -1,3 +1,5 @@
+from importlib import metadata
+
 import fitz  # pymupdf
 import re
 import os
@@ -41,25 +43,52 @@ def detect_topic(text):
     best = max(scores, key=scores.get)
     return best if scores[best] > 0 else "General"
 
-def extract_year(text):
+def extract_year(text, filename=""):
+    match = re.search(r'\d{1,2}/\d{1,2}/((19|20)\d{2})', text)
+    if match:
+        return int(match.group(1))
+    
+    match = re.search(r'\d{1,2}\s+(january|february|march|april|may|june|july|august|september|october|november|december),?\s+((19|20)\d{2})', text, re.IGNORECASE)
+    if match:
+        return int(match.group(2))
+
+    match = re.search(r'(january|february|march|april|may|june|july|august|september|october|november|december)\s+((19|20)\d{2})', text, re.IGNORECASE)
+    if match:
+        return int(match.group(2))
+
     match = re.search(r'\b(19|20)\d{2}\b', text)
-    return int(match.group()) if match else None
+    if match:
+        return int(match.group())
+
+    match = re.search(r'(19|20)\d{2}(\d{2})', filename)
+    if match:
+        century = match.group(1)[:2]
+        return int(f"{century}{match.group(2)}")
+    
+    match = re.search(r'\b(19|20)\d{2}\b', filename)
+    if match:
+        return int(match.group())
+
+    return None
 
 def extract_marks(text):
     match = re.search(r'\((\d+)\s+marks?\)', text, re.IGNORECASE)
     return int(match.group(1)) if match else None
 
-def extract_metadata(first_page_text):
+def extract_metadata(first_page_text, filename=""):
     metadata = {
-        "year": extract_year(first_page_text),
+        "year": extract_year(first_page_text, filename),
         "institution": None,
         "course": None,
-        "semester": None,
+        "semester": 1,
+        "is_repeat": "repeat" in filename.lower() or "august" in first_page_text.lower(),
         "duration": None,
     }
 
     if "WATERFORD" in first_page_text.upper() or "WIT" in first_page_text.upper():
-        metadata["institution"] = "WIT / SETU"
+        metadata["institution"] = "WIT"
+    elif "SOUTH EAST TECHNOLOGICAL" in first_page_text.upper() or "SETU" in first_page_text.upper():
+        metadata["institution"] = "SETU"
 
     course_match = re.search(r'(DISCRETE MATHEMATICS)', first_page_text, re.IGNORECASE)
     if course_match:
@@ -76,7 +105,7 @@ def extract_metadata(first_page_text):
     return metadata
 
 def split_into_questions(full_text):
-    # Split on "Question N" headers
+    
     pattern = r'(Question\s+\d+)'
     parts = re.split(pattern, full_text, flags=re.IGNORECASE)
 
@@ -97,7 +126,7 @@ def split_into_questions(full_text):
 def split_into_parts(question_text, question_number):
     parts = []
 
-    # Match sub-parts like (a), (b), (c)
+    
     main_parts = re.split(r'\n\s*\(([a-z])\)\s*', question_text)
 
     part_label = None
@@ -109,11 +138,11 @@ def split_into_parts(question_text, question_number):
         if part_label is None:
             continue
 
-        # Further split into sub-parts like (i), (ii), (iii)
+        
         sub_parts = re.split(r'\((\s*(?:i{1,3}|iv|v|vi|vii|viii|ix|x))\s*\)', chunk, flags=re.IGNORECASE)
 
         if len(sub_parts) == 1:
-            # No sub-parts, treat whole chunk as one part
+        
             text = chunk.strip()
             marks = extract_marks(text)
             if text:
@@ -144,8 +173,8 @@ def parse_pdf(filepath):
     
     doc = fitz.open(filepath)
     filename = os.path.basename(filepath)
+    is_marking_scheme = filename.upper().endswith("_MS.PDF")
 
-    # Extract all text
     full_text = ""
     page_texts = []
     for page in doc:
@@ -153,19 +182,15 @@ def parse_pdf(filepath):
         page_texts.append(text)
         full_text += text + "\n"
 
-    # Get metadata from first page
-    metadata = extract_metadata(page_texts[0])
+    metadata = extract_metadata(page_texts[0], filename)
     year = metadata["year"]
 
-    # Skip reference/law pages (usually last 2-3 pages)
-    # Heuristic: pages with "Laws of" or "Table of" are reference pages
     content_text = ""
     for text in page_texts:
         if re.search(r'laws of|table of logical|equivalence name', text, re.IGNORECASE):
             break
         content_text += text + "\n"
 
-    # Split into questions
     questions = split_into_questions(content_text)
 
     rows = []
@@ -178,6 +203,7 @@ def parse_pdf(filepath):
 
             rows.append({
                 "filename": filename,
+                "is_marking_scheme": is_marking_scheme,
                 "year": year,
                 "institution": metadata["institution"],
                 "semester": metadata["semester"],
