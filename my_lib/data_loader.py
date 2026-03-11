@@ -1,8 +1,10 @@
 import pandas as pd
 import os
 from my_lib.pdf_parser import parse_all_pdfs
+import streamlit as st
 
 EXAM_FOLDER = "exams"
+@st.cache_data(show_spinner="Parsing exam papers...")
 
 def load_data():
     rows = parse_all_pdfs(EXAM_FOLDER)
