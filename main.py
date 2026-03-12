@@ -1,6 +1,6 @@
 import streamlit as st
 from my_lib import load_data
-from pages import home, question_browser, topic_explorer, search
+from views import home, question_browser, topic_explorer, search
 
 
 st.set_page_config(
