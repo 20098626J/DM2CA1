@@ -226,10 +226,7 @@ def parse_pdf(filepath):
 
 
 def parse_all_pdfs(exam_folder):
-    """
-    Parse all PDFs in the exam folder.
-    Returns a list of all question dicts across all papers.
-    """
+    
     all_rows = []
     if not os.path.exists(exam_folder):
         return all_rows

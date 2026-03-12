@@ -66,4 +66,4 @@ def get_year_summary(df):
         total_marks=("marks", "sum")
     ).reset_index()
     summary["year"] = summary["year"].astype(int)
-    return summary.sort_values("year", ascending=False)
+    return summary.sort_values("year", ascending=True)
