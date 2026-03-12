@@ -18,4 +18,5 @@ def load_data():
     df["marks"] = pd.to_numeric(df["marks"], errors="coerce")
     df["text"] = df["text"].fillna("").str.strip()
     df["topic"] = df["topic"].fillna("General")
+    df = df[df["is_marking_scheme"] == False].reset_index(drop=True)
     return df
