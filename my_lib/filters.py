@@ -67,3 +67,14 @@ def get_year_summary(df):
     ).reset_index()
     summary["year"] = summary["year"].astype(int)
     return summary.sort_values("year", ascending=True)
+
+
+
+def get_filter_options(df):
+    
+    return {
+        "years": sorted(df["year"].dropna().unique().astype(int).tolist(), reverse=True),
+        "topics": sorted(df["topic"].dropna().unique().tolist()),
+        "marks": sorted(df["marks"].dropna().unique().astype(int).tolist()),
+        "questions": sorted(df["question_number"].dropna().unique().astype(int).tolist()),
+    }
