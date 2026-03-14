@@ -142,7 +142,7 @@ def split_into_parts(question_text, question_number):
             continue
 
         
-        sub_parts = re.split(r'\((\s*(?:i{1,3}|iv|v|vi|vii|viii|ix|x))\s*\)', chunk, flags=re.IGNORECASE)
+        sub_parts = re.split(r'\((\s*(?:i{1,3}|iv|v|vi|vii|viii|ix|x|\d+))\s*\)', chunk, flags=re.IGNORECASE)
 
         if len(sub_parts) == 1:
         
@@ -158,7 +158,7 @@ def split_into_parts(question_text, question_number):
             sub_label = None
             for sub_chunk in sub_parts:
                 stripped = sub_chunk.strip()
-                if re.fullmatch(r'i{1,3}|iv|v|vi|vii|viii|ix|x', stripped, re.IGNORECASE):
+                if re.fullmatch(r'i{1,3}|iv|v|vi|vii|viii|ix|x|/d+', stripped, re.IGNORECASE):
                     sub_label = stripped
                     continue
                 if sub_label and stripped:

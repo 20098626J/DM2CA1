@@ -54,3 +54,24 @@ print(f"Questions mentioning 'digraph': {len(results)}")
 
 results = keyword_search(df, "ordered pairs")
 print(f"Questions mentioning 'ordered pairs': {len(results)}")
+
+print(df["marks"].max())
+print(df["marks"].value_counts().sort_index())
+
+import fitz
+import os
+
+pdf_path = None
+for root, _, files in os.walk("exams"):
+    for f in files:
+        if "2013" in f and "MS" not in f:
+            pdf_path = os.path.join(root, f)
+
+if pdf_path:
+    doc = fitz.open(pdf_path)
+    for page in doc:
+        text = page.get_text()
+        if "15 marks" in text.lower():
+            print(text)
+            print("---")
+    doc.close()

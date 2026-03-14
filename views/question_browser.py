@@ -26,11 +26,13 @@ def build(df):
             "Question Number", options["questions"], default=[]
         )
 
+        max_marks_val = int(df["marks"].max()) if not df["marks"].isna().all() else 20
+
         marks_range = st.slider(
             "Marks Range",
             min_value=0,
-            max_value=int(df["marks"].max()) if not df["marks"].isna().all() else 20,
-            value=(0, int(df["marks"].max()) if not df["marks"].isna().all() else 20)
+            max_value=max_marks_val,
+            value=(0, max_marks_val)
         )
 
     
